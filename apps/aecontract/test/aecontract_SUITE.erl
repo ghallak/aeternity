@@ -195,6 +195,7 @@
         , bad_aens_pointer_handling_lima_to_iris/1
         , sophia_pattern_guards/1
         , sophia_bitwise_operations/1
+        , sophia_contract_interface_polymorphism/1
         ]).
 
 -include_lib("common_test/include/ct.hrl").
@@ -482,6 +483,7 @@ groups() ->
                                  sophia_protected_call,
                                  sophia_pattern_guards,
                                  sophia_bitwise_operations,
+                                 sophia_contract_interface_polymorphism,
                                  bad_aens_pointer_handling_lima_to_iris,
                                  lima_migration
                                ]}
@@ -7654,5 +7656,13 @@ sophia_bitwise_operations(_Cfg) ->
     state(aect_test_utils:new_state()),
     Acc = ?call(new_account, 100000000000 * aec_test_utils:min_gas_price()),
     C   = ?call(create_contract, Acc, bitwise_ops, {}),
+    {}  = ?call(call_contract, Acc, C, test, {tuple, []}, {}),
+    ok.
+
+sophia_contract_interface_polymorphism(_Cfg) ->
+    ?skipRest(sophia_version() =< ?SOPHIA_LIMA_FATE, no_contract_interface_polymorphism_iris),
+    state(aect_test_utils:new_state()),
+    Acc = ?call(new_account, 100000000000 * aec_test_utils:min_gas_price()),
+    C   = ?call(create_contract, Acc, contract_interface_polymorphism, {}),
     {}  = ?call(call_contract, Acc, C, test, {tuple, []}, {}),
     ok.

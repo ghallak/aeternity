@@ -1,0 +1,22 @@
+include "List.aes"
+
+contract interface Animal =
+    entrypoint name : () => string
+
+contract Cat : Animal =
+    entrypoint name() = "cat"
+
+contract Dog : Animal =
+    entrypoint name() = "dog"
+
+main contract Main =
+    function assert(p) = switch(p)
+        (t, msg) => if(t) () else abort(msg)
+
+    stateful entrypoint test() =
+        let cat : Animal = (Chain.create() : Cat)
+        let dog : Animal = (Chain.create() : Dog)
+        List.foreach(
+            [ (cat.name() == "cat", "cat name")
+            , (dog.name() == "dog", "dog name")
+            ], assert)
