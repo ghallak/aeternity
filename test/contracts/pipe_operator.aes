@@ -1,0 +1,19 @@
+include "List.aes"
+
+contract Main =
+    function assert(p) = switch(p)
+        (t, msg) => if(t) () else abort(msg)
+
+    function is_zero(x : int) : string = switch(x)
+        0 => "zero"
+        _ => "non-zero"
+
+    function incByOne(x : int) = x + 1
+    function incByTwo(x : int) = x + 2
+
+    entrypoint test() = List.foreach(
+        [ ((0 |> is_zero) == "zero", "simple_1")
+        , ((1 |> is_zero) == "non-zero", "simple_2")
+        , ((3 |> incByOne |> incByOne |> incByTwo) == 7, "chain")
+        , ((5 |> ((x) => x * 5) |> incByOne) == 26, "lambda")
+        ], assert)

@@ -152,6 +152,7 @@
         , sophia_state_gas_store_size/1
         , sophia_no_callobject_for_remote_calls/1
         , sophia_operators/1
+        , sophia_pipe_operator/1
         , sophia_bits/1
         , sophia_aevm_bad_code/1
         , sophia_aevm_bad_init/1
@@ -457,6 +458,7 @@ groups() ->
                                  sophia_state_gas_store_size,
                                  sophia_no_callobject_for_remote_calls,
                                  sophia_operators,
+                                 sophia_pipe_operator,
                                  sophia_bits,
                                  sophia_int_to_str,
                                  sophia_events,
@@ -5018,6 +5020,14 @@ sophia_operators(_Cfg) ->
     <<HashXN:256>> = HashX = aec_hash:hash(evm, <<"TestString">>),
     ?assertMatchVM(HashXN, {bytes, HashX}, Hash1),
 
+    ok.
+
+sophia_pipe_operator(_Cfg) ->
+    ?skipRest(sophia_version() =< ?SOPHIA_LIMA_FATE, no_pipe_operator_until_iris),
+    state(aect_test_utils:new_state()),
+    Acc = ?call(new_account, 100000000000 * aec_test_utils:min_gas_price()),
+    C   = ?call(create_contract, Acc, pipe_operator, {}),
+    {} = ?call(call_contract, Acc, C, test, {tuple, []}, {}),
     ok.
 
 sophia_bits(_Cfg) ->
